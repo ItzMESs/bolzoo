@@ -357,7 +357,13 @@ export default function ViewerPage({ params }) {
         <div className="progress" id="vProgress"></div>
 
         <div className="step active" data-vstep="0">
-          {bearSvg}
+          {payload && payload.photo ? (
+            <div className="photo-frame invite-photo-frame">
+              <img src={payload.photo} alt="" />
+            </div>
+          ) : (
+            bearSvg
+          )}
           <div className="eyebrow" id="vPairLabel"></div>
           <div className="subtext">МАРТАГДАШГҮЙ ОРОЙ БАЙХ БОЛНО</div>
           <h1 className="script">Надтай болзоонд<br />явах уу?</h1>
