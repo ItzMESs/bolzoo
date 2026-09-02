@@ -102,11 +102,20 @@ export default function ViewerPage({ params }) {
     let noTries = 0;
     function dodge() {
       noTries = Math.min(noTries + 1, noPhrases.length - 1);
-      noBtn.textContent = noPhrases[noTries];
-      const maxX = ynRow.clientWidth - noBtn.offsetWidth - 4;
-      const maxY = 40;
+      // Reset any earlier offset before measuring, so the room we compute
+      // below is relative to the button's natural (centered) resting spot —
+      // not to a spot it was already nudged away from on a prior dodge.
       noBtn.style.position = "relative";
-      noBtn.style.left = Math.random() * maxX * 0.6 + "px";
+      noBtn.style.left = "0px";
+      noBtn.style.top = "0px";
+      noBtn.textContent = noPhrases[noTries];
+      const rowRect = ynRow.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const roomRight = Math.max(0, rowRect.right - btnRect.right - 6);
+      const roomLeft = Math.max(0, btnRect.left - rowRect.left - 6);
+      const shiftX = Math.random() * (roomRight + roomLeft) - roomLeft;
+      const maxY = 18;
+      noBtn.style.left = shiftX + "px";
       noBtn.style.top = (Math.random() - 0.5) * maxY + "px";
     }
     noBtn.addEventListener("mouseenter", dodge);
@@ -269,8 +278,10 @@ export default function ViewerPage({ params }) {
     }
     async function buildShareCanvas(dateVal, bringVal, afterVal) {
       try { await document.fonts.load('700 60px "Caveat"'); } catch (e) {}
+      // Sized to Instagram Story's exact 9:16 frame so the image drops in
+      // without cropping when shared as a Story background.
       const canvas = document.createElement("canvas");
-      canvas.width = 900; canvas.height = 1500;
+      canvas.width = 1080; canvas.height = 1920;
       const ctx = canvas.getContext("2d");
 
       const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
@@ -286,44 +297,62 @@ export default function ViewerPage({ params }) {
 
       ctx.textAlign = "center";
       ctx.fillStyle = "#fff8f3";
-      ctx.font = '700 84px "Caveat", cursive';
-      ctx.fillText("Болзоо товлогдлоо!", canvas.width / 2, 220);
+      ctx.font = '700 101px "Caveat", cursive';
+      ctx.fillText("Болзоо товлогдлоо!", canvas.width / 2, 324);
 
-      ctx.font = "130px serif";
-      ctx.fillText("🐻 🧸", canvas.width / 2, 380);
+      ctx.font = "156px serif";
+      ctx.fillText("🐻 🧸", canvas.width / 2, 516);
 
-      const cardX = 90, cardY = 470, cardW = canvas.width - 180, cardH = 480;
+      const cardX = 108, cardY = 624, cardW = canvas.width - 216, cardH = 576;
       ctx.fillStyle = "#fff8f3";
-      roundRectPath(ctx, cardX, cardY, cardW, cardH, 30);
+      roundRectPath(ctx, cardX, cardY, cardW, cardH, 36);
       ctx.fill();
 
       ctx.textAlign = "left";
       ctx.fillStyle = "#a5486b";
-      ctx.font = "700 24px sans-serif";
-      ctx.fillText("БОЛЗООНЫ КАРТ", cardX + 44, cardY + 66);
+      ctx.font = "700 29px sans-serif";
+      ctx.fillText("БОЛЗООНЫ КАРТ", cardX + 53, cardY + 79);
 
       function row(label, val, y) {
-        ctx.fillStyle = "#a5486b"; ctx.font = "700 19px sans-serif";
-        ctx.fillText(label, cardX + 44, y);
-        ctx.fillStyle = "#2c0a1c"; ctx.font = "700 30px sans-serif";
-        ctx.fillText(val, cardX + 44, y + 40);
+        ctx.fillStyle = "#a5486b"; ctx.font = "700 23px sans-serif";
+        ctx.fillText(label, cardX + 53, y);
+        ctx.fillStyle = "#2c0a1c"; ctx.font = "700 36px sans-serif";
+        ctx.fillText(val, cardX + 53, y + 48);
       }
-      row("ХЭЗЭЭ", dateVal, cardY + 150);
-      row("ЮУ АВЧРАХ", bringVal, cardY + 250);
-      row("ДАРАА НЬ", afterVal, cardY + 350);
+      row("ХЭЗЭЭ", dateVal, cardY + 180);
+      row("ЮУ АВЧРАХ", bringVal, cardY + 300);
+      row("ДАРАА НЬ", afterVal, cardY + 420);
 
       ctx.textAlign = "center";
       ctx.fillStyle = "#ffb8cf";
-      ctx.font = '700 40px "Caveat", cursive';
-      ctx.fillText(`${SENDER}  ×  ${RECEIVER}`, canvas.width / 2, cardY + cardH + 90);
+      ctx.font = '700 48px "Caveat", cursive';
+      ctx.fillText(`${SENDER}  ×  ${RECEIVER}`, canvas.width / 2, cardY + cardH + 108);
 
       return canvas;
+    }
+
+    function isIOSSafari() {
+      const ua = navigator.userAgent;
+      const iOS = /iP(hone|od|ad)/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      return iOS;
+    }
+
+    async function fallbackShare(blob) {
+      const file = new File([blob], "bolzoo-urilga.png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: "Болзоо товлогдлоо", text: `${SENDER} × ${RECEIVER}` }); return; }
+        catch (err) { /* user cancelled or unsupported — fall through to download */ }
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "bolzoo-urilga.png"; a.click();
+      showToast("Зураг татагдлаа ✓ Instagram-даа зураг хэсгээс сонгоод Story-даа нэмээрэй");
     }
 
     document.getElementById("vImageBtn").addEventListener("click", async (e) => {
       const btn = e.currentTarget;
       const originalText = btn.textContent;
-      btn.textContent = "Зураг үүсгэж байна...";
+      btn.textContent = "Бэлдэж байна...";
       btn.disabled = true;
       try {
         const canvas = await buildShareCanvas(
@@ -331,18 +360,33 @@ export default function ViewerPage({ params }) {
           document.getElementById("vTBring").textContent,
           document.getElementById("vTAfter").textContent
         );
-        canvas.toBlob(async (blob) => {
-          if (!blob) { showToast("Зураг үүсгэхэд алдаа гарлаа"); return; }
-          const file = new File([blob], "bolzoo-urilga.png", { type: "image/png" });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try { await navigator.share({ files: [file], title: "Болзоо товлогдлоо", text: `${SENDER} × ${RECEIVER}` }); return; }
-            catch (err) { /* fall through to download */ }
-          }
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url; a.download = "bolzoo-urilga.png"; a.click();
-          showToast("Зураг татагдлаа ✓");
-        }, "image/png");
+        await new Promise((resolve) => {
+          canvas.toBlob(async (blob) => {
+            if (!blob) { showToast("Зураг үүсгэхэд алдаа гарлаа"); resolve(); return; }
+
+            // Best-effort: on iOS, put the image on the clipboard and jump straight
+            // into Instagram's Story composer with it pre-loaded. This is an
+            // unofficial trick (Instagram/Apple give no public API for it) so it
+            // can silently fail on some app/OS versions — if Instagram doesn't
+            // visibly open within ~1.2s we fall back to the normal share sheet.
+            if (isIOSSafari() && window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+              try {
+                await navigator.clipboard.write([new window.ClipboardItem({ "image/png": blob })]);
+                let handled = false;
+                const onHide = () => { handled = true; };
+                document.addEventListener("visibilitychange", onHide, { once: true });
+                window.location.href = "instagram-stories://share?source_application=bolzoo_urilga";
+                setTimeout(() => {
+                  document.removeEventListener("visibilitychange", onHide);
+                  if (!handled) fallbackShare(blob).finally(resolve);
+                  else resolve();
+                }, 1200);
+                return;
+              } catch (err) { /* clipboard write failed — fall through */ }
+            }
+            fallbackShare(blob).finally(resolve);
+          }, "image/png");
+        });
       } finally {
         btn.textContent = originalText;
         btn.disabled = false;
@@ -432,7 +476,8 @@ export default function ViewerPage({ params }) {
             <div className="box"><div className="num" id="vCdS">0</div><div className="lab">секунд</div></div>
           </div>
 
-          <button className="cta" id="vImageBtn" style={{ marginTop: 0, marginBottom: 10 }}>🖼️ Зурган карт болгож хуваалцах</button>
+          <button className="cta" id="vImageBtn" style={{ marginTop: 0, marginBottom: 10 }}>📸 Instagram Story-д нэмэх</button>
+          <div className="hint" style={{ marginTop: -4, marginBottom: 10 }}>Зураг бэлэн болмогц Instagram-аа сонгоод "Нийтлэх" гэхэд л Story-нд орно</div>
 
           <div className="row-btns">
             <button className="btn-save" id="vSaveBtn">Дэлгэрэнгүй хуулах</button>
