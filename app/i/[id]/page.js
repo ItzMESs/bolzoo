@@ -103,20 +103,17 @@ export default function ViewerPage({ params }) {
     function dodge() {
       noTries = Math.min(noTries + 1, noPhrases.length - 1);
       noBtn.textContent = noPhrases[noTries];
+      // "Yes" lives in a fixed lane on the left (see .btn-yes CSS); "No" is
+      // only ever allowed to land in the lane to the right of it, so the two
+      // can never visually overlap no matter how long the phrase gets.
       const rowRect = ynRow.getBoundingClientRect();
-      if (noBtn.style.position !== "absolute") {
-        // First dodge: lift the button out of the flex row and pin it at its
-        // current on-screen spot first, so nothing jumps — from then on it's
-        // positioned purely relative to the row's own box, which physically
-        // cannot let it escape the row no matter how long the phrase is.
-        const startRect = noBtn.getBoundingClientRect();
-        noBtn.style.position = "absolute";
-        noBtn.style.left = (startRect.left - rowRect.left) + "px";
-        noBtn.style.top = (startRect.top - rowRect.top) + "px";
-      }
-      const maxX = Math.max(0, rowRect.width - noBtn.offsetWidth);
+      const yesRect = yesBtn.getBoundingClientRect();
+      const laneLeft = Math.min(rowRect.width, yesRect.right - rowRect.left + 10);
+      const maxX = Math.max(0, rowRect.width - noBtn.offsetWidth - laneLeft);
       const maxY = Math.max(0, rowRect.height - noBtn.offsetHeight);
-      noBtn.style.left = Math.random() * maxX + "px";
+      noBtn.style.right = "auto";
+      noBtn.style.transform = "none";
+      noBtn.style.left = (laneLeft + Math.random() * maxX) + "px";
       noBtn.style.top = Math.random() * maxY + "px";
     }
     noBtn.addEventListener("mouseenter", dodge);
