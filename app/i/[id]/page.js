@@ -4,20 +4,26 @@ import { useEffect, useState, useRef } from "react";
 
 const bearSvg = (
   <svg className="bears" viewBox="0 0 150 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="55" cy="75" rx="34" ry="30" fill="#fff3ef" />
-    <circle cx="30" cy="45" r="13" fill="#fff3ef" /><circle cx="80" cy="45" r="13" fill="#fff3ef" />
-    <circle cx="30" cy="45" r="6" fill="#ffd7e2" /><circle cx="80" cy="45" r="6" fill="#ffd7e2" />
-    <ellipse cx="55" cy="80" rx="14" ry="11" fill="#ffe9e2" />
-    <path d="M46 68 q9 6 18 0" stroke="#3a2a26" strokeWidth="2.4" strokeLinecap="round" fill="none" />
-    <circle cx="42" cy="60" r="6" fill="#ffc9d6" opacity="0.7" /><circle cx="68" cy="60" r="6" fill="#ffc9d6" opacity="0.7" />
-    <ellipse cx="102" cy="78" rx="32" ry="28" fill="#e8935a" />
-    <circle cx="80" cy="50" r="12" fill="#e8935a" /><circle cx="124" cy="50" r="12" fill="#e8935a" />
-    <circle cx="80" cy="50" r="5.5" fill="#fbd2a8" /><circle cx="124" cy="50" r="5.5" fill="#fbd2a8" />
-    <ellipse cx="102" cy="82" rx="13" ry="10" fill="#fbd2a8" />
-    <circle cx="94" cy="70" r="3.2" fill="#3a2a26" /><circle cx="110" cy="70" r="3.2" fill="#3a2a26" />
-    <ellipse cx="102" cy="80" rx="3.5" ry="2.6" fill="#3a2a26" />
-    <path d="M94 88 q8 6 16 0" stroke="#3a2a26" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-    <path d="M67 30 c3-7 12-7 13 0 c1-7 10-7 13 0 c1 8-13 16-13 16 s-14-8-13-16z" fill="#ff5d8f" />
+    <path d="M118 6 c2-5 9-5 9.5 0 c0.5-5 7.5-5 9.5 0 c1 6-9.5 12-9.5 12 s-10.5-6-9.5-12z" fill="#ff5d8f" stroke="#c23663" strokeWidth="1.6" strokeLinejoin="round" />
+    <path d="M135 22 c1.3-3.3 6-3.3 6.3 0 c0.3-3.3 5-3.3 6.3 0 c0.7 4-6.3 8-6.3 8 s-7-4-6.3-8z" fill="#ff8bad" stroke="#c23663" strokeWidth="1.4" strokeLinejoin="round" />
+    <path d="M51 83 c0-24 21-43 46-43 c25 0 46 19 46 43 c0 15-13 24-46 24 c-33 0-46-9-46-24z" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.6" strokeLinejoin="round" />
+    <circle cx="80" cy="32" r="12" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.4" /><circle cx="120" cy="32" r="12" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.4" />
+    <circle cx="80" cy="32" r="5.5" fill="#fbd2a8" /><circle cx="120" cy="32" r="5.5" fill="#fbd2a8" />
+    <ellipse cx="100" cy="62" rx="12" ry="9" fill="#fbd2a8" stroke="#8a4a1f" strokeWidth="2" />
+    <path d="M89 52 q4 -6 8 0" stroke="#3a2a26" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+    <path d="M105 52 q4 -6 8 0" stroke="#3a2a26" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+    <ellipse cx="100" cy="62" rx="2.6" ry="2" fill="#3a2a26" />
+    <path d="M94 68 q6 5 12 0" stroke="#3a2a26" strokeWidth="2" strokeLinecap="round" fill="none" />
+    <circle cx="86" cy="58" r="5" fill="#ffc9d6" opacity="0.6" /><circle cx="114" cy="58" r="5" fill="#ffc9d6" opacity="0.6" />
+    <path d="M9 78 c0-27 15-49 37-49 c22 0 37 22 37 49 c0 15-12 22-37 22 c-25 0-37-7-37-22z" fill="#fff3ef" stroke="#caa79e" strokeWidth="2.6" strokeLinejoin="round" />
+    <circle cx="25" cy="20" r="13" fill="#fff3ef" stroke="#caa79e" strokeWidth="2.4" /><circle cx="67" cy="20" r="13" fill="#fff3ef" stroke="#caa79e" strokeWidth="2.4" />
+    <circle cx="25" cy="20" r="6" fill="#ffd7e2" /><circle cx="67" cy="20" r="6" fill="#ffd7e2" />
+    <circle cx="38" cy="44" r="3" fill="#3a2a26" /><circle cx="56" cy="44" r="3" fill="#3a2a26" />
+    <ellipse cx="47" cy="52" rx="3.6" ry="5" fill="#ffb3c4" />
+    <circle cx="30" cy="54" r="6" fill="#ffc9d6" opacity="0.7" /><circle cx="62" cy="54" r="6" fill="#ffc9d6" opacity="0.7" />
+    <path d="M56 74 Q76 58 98 66" stroke="#caa79e" strokeWidth="20" strokeLinecap="round" fill="none" />
+    <path d="M56 74 Q76 58 98 66" stroke="#fff3ef" strokeWidth="16" strokeLinecap="round" fill="none" />
+    <circle cx="99" cy="67" r="9" fill="#fff3ef" stroke="#caa79e" strokeWidth="2.2" />
   </svg>
 );
 
@@ -289,8 +295,60 @@ export default function ViewerPage({ params }) {
       ctx.arcTo(x, y, x + w, y, r);
       ctx.closePath();
     }
+    // Same bear + bunny illustration used elsewhere on the site, loaded as
+    // an image so the shared Story card matches the app's own art style
+    // instead of relying on a plain emoji.
+    const COUPLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 110">
+      <path d="M118 6 c2-5 9-5 9.5 0 c0.5-5 7.5-5 9.5 0 c1 6-9.5 12-9.5 12 s-10.5-6-9.5-12z" fill="#ff5d8f" stroke="#c23663" stroke-width="1.6" stroke-linejoin="round" />
+      <path d="M135 22 c1.3-3.3 6-3.3 6.3 0 c0.3-3.3 5-3.3 6.3 0 c0.7 4-6.3 8-6.3 8 s-7-4-6.3-8z" fill="#ff8bad" stroke="#c23663" stroke-width="1.4" stroke-linejoin="round" />
+      <path d="M51 83 c0-24 21-43 46-43 c25 0 46 19 46 43 c0 15-13 24-46 24 c-33 0-46-9-46-24z" fill="#e8935a" stroke="#8a4a1f" stroke-width="2.6" stroke-linejoin="round" />
+      <circle cx="80" cy="32" r="12" fill="#e8935a" stroke="#8a4a1f" stroke-width="2.4" /><circle cx="120" cy="32" r="12" fill="#e8935a" stroke="#8a4a1f" stroke-width="2.4" />
+      <circle cx="80" cy="32" r="5.5" fill="#fbd2a8" /><circle cx="120" cy="32" r="5.5" fill="#fbd2a8" />
+      <ellipse cx="100" cy="62" rx="12" ry="9" fill="#fbd2a8" stroke="#8a4a1f" stroke-width="2" />
+      <path d="M89 52 q4 -6 8 0" stroke="#3a2a26" stroke-width="2.4" stroke-linecap="round" fill="none" />
+      <path d="M105 52 q4 -6 8 0" stroke="#3a2a26" stroke-width="2.4" stroke-linecap="round" fill="none" />
+      <ellipse cx="100" cy="62" rx="2.6" ry="2" fill="#3a2a26" />
+      <path d="M94 68 q6 5 12 0" stroke="#3a2a26" stroke-width="2" stroke-linecap="round" fill="none" />
+      <circle cx="86" cy="58" r="5" fill="#ffc9d6" opacity="0.6" /><circle cx="114" cy="58" r="5" fill="#ffc9d6" opacity="0.6" />
+      <path d="M9 78 c0-27 15-49 37-49 c22 0 37 22 37 49 c0 15-12 22-37 22 c-25 0-37-7-37-22z" fill="#fff3ef" stroke="#caa79e" stroke-width="2.6" stroke-linejoin="round" />
+      <circle cx="25" cy="20" r="13" fill="#fff3ef" stroke="#caa79e" stroke-width="2.4" /><circle cx="67" cy="20" r="13" fill="#fff3ef" stroke="#caa79e" stroke-width="2.4" />
+      <circle cx="25" cy="20" r="6" fill="#ffd7e2" /><circle cx="67" cy="20" r="6" fill="#ffd7e2" />
+      <circle cx="38" cy="44" r="3" fill="#3a2a26" /><circle cx="56" cy="44" r="3" fill="#3a2a26" />
+      <ellipse cx="47" cy="52" rx="3.6" ry="5" fill="#ffb3c4" />
+      <circle cx="30" cy="54" r="6" fill="#ffc9d6" opacity="0.7" /><circle cx="62" cy="54" r="6" fill="#ffc9d6" opacity="0.7" />
+      <path d="M56 74 Q76 58 98 66" stroke="#caa79e" stroke-width="20" stroke-linecap="round" fill="none" />
+      <path d="M56 74 Q76 58 98 66" stroke="#fff3ef" stroke-width="16" stroke-linecap="round" fill="none" />
+      <circle cx="99" cy="67" r="9" fill="#fff3ef" stroke="#caa79e" stroke-width="2.2" />
+    </svg>`;
+    function loadCoupleImage() {
+      return new Promise((resolve) => {
+        try {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+          img.src = "data:image/svg+xml;base64," + btoa(COUPLE_SVG);
+        } catch (e) { resolve(null); }
+      });
+    }
+    function drawHeart(ctx, x, y, size, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      const top = y - size * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(x, top + size * 0.3);
+      ctx.bezierCurveTo(x, top, x - size / 2, top, x - size / 2, top + size * 0.3);
+      ctx.bezierCurveTo(x - size / 2, top + size * 0.65, x, top + size * 0.85, x, top + size);
+      ctx.bezierCurveTo(x, top + size * 0.85, x + size / 2, top + size * 0.65, x + size / 2, top + size * 0.3);
+      ctx.bezierCurveTo(x + size / 2, top, x, top, x, top + size * 0.3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
     async function buildShareCanvas(dateVal, bringVal, afterVal) {
       try { await document.fonts.load('700 60px "Caveat"'); } catch (e) {}
+      const coupleImg = await loadCoupleImage();
       // Sized to Instagram Story's exact 9:16 frame so the image drops in
       // without cropping when shared as a Story background.
       const canvas = document.createElement("canvas");
@@ -308,13 +366,25 @@ export default function ViewerPage({ params }) {
         }
       }
 
+      // Decorative hearts scattered in the open margins above the title and
+      // below the names, so the frame doesn't feel bare on a tall Story.
+      const hearts = [
+        [150, 110, 40, "#ff8bad", 0.55], [930, 90, 52, "#ff5d8f", 0.8], [850, 220, 28, "#ffb8cf", 0.45],
+        [190, 1430, 34, "#ff8bad", 0.5], [900, 1400, 46, "#ff5d8f", 0.65],
+        [230, 1720, 26, "#ffb8cf", 0.4], [860, 1740, 38, "#ff8bad", 0.5],
+        [400, 1830, 22, "#ff8bad", 0.35], [680, 1850, 30, "#ffb8cf", 0.4],
+      ];
+      hearts.forEach(([hx, hy, hs, hc, ha]) => drawHeart(ctx, hx, hy, hs, hc, ha));
+
       ctx.textAlign = "center";
       ctx.fillStyle = "#fff8f3";
       ctx.font = '700 101px "Caveat", cursive';
       ctx.fillText("Болзоо товлогдлоо!", canvas.width / 2, 324);
 
-      ctx.font = "156px serif";
-      ctx.fillText("🐻 🧸", canvas.width / 2, 516);
+      if (coupleImg) {
+        const iw = 320, ih = iw * (110 / 150);
+        ctx.drawImage(coupleImg, canvas.width / 2 - iw / 2, 380, iw, ih);
+      }
 
       const cardX = 108, cardY = 624, cardW = canvas.width - 216, cardH = 576;
       ctx.fillStyle = "#fff8f3";
@@ -340,6 +410,28 @@ export default function ViewerPage({ params }) {
       ctx.fillStyle = "#ffb8cf";
       ctx.font = '700 48px "Caveat", cursive';
       ctx.fillText(`${SENDER}  ×  ${RECEIVER}`, canvas.width / 2, cardY + cardH + 108);
+
+      // Call to action + the site's own link, so anyone who sees the Story
+      // can tap through and make their own invite.
+      ctx.fillStyle = "#ffd7e6";
+      ctx.font = "700 30px sans-serif";
+      ctx.fillText("Чи ч бас өөрийн урилгаа үүсгээрэй", canvas.width / 2, cardY + cardH + 190);
+
+      const linkText = (typeof location !== "undefined" ? location.origin.replace(/^https?:\/\//, "") : "");
+      if (linkText) {
+        ctx.font = "700 34px sans-serif";
+        const padX = 44, padY = 24, textW = ctx.measureText(linkText).width;
+        const pillW = textW + padX * 2, pillH = 34 + padY * 2;
+        const pillX = canvas.width / 2 - pillW / 2, pillY = cardY + cardH + 230;
+        ctx.fillStyle = "rgba(255,255,255,0.14)";
+        roundRectPath(ctx, pillX, pillY, pillW, pillH, pillH / 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.4)"; ctx.lineWidth = 2;
+        roundRectPath(ctx, pillX, pillY, pillW, pillH, pillH / 2);
+        ctx.stroke();
+        ctx.fillStyle = "#fff8f3";
+        ctx.fillText(linkText, canvas.width / 2, pillY + pillH / 2 + 12);
+      }
 
       return canvas;
     }
@@ -464,11 +556,27 @@ export default function ViewerPage({ params }) {
           <h1 className="script" style={{ fontSize: 30 }}>Болзоо<br />товлогдлоо!</h1>
           <div className="ticket" style={{ marginTop: 14 }}>
             <div className="ticket-stamp" id="vStamp">ХАДГАЛСАН</div>
-            <svg className="mini-bears" viewBox="0 0 150 110" xmlns="http://www.w3.org/2000/svg">
-              <ellipse cx="55" cy="75" rx="34" ry="30" fill="#f3e3ea" />
-              <circle cx="30" cy="45" r="13" fill="#f3e3ea" /><circle cx="80" cy="45" r="13" fill="#f3e3ea" />
-              <ellipse cx="102" cy="78" rx="32" ry="28" fill="#e8935a" />
-              <circle cx="80" cy="50" r="12" fill="#e8935a" /><circle cx="124" cy="50" r="12" fill="#e8935a" />
+            <svg className="mini-bears" viewBox="0 0 150 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M118 6 c2-5 9-5 9.5 0 c0.5-5 7.5-5 9.5 0 c1 6-9.5 12-9.5 12 s-10.5-6-9.5-12z" fill="#ff5d8f" stroke="#c23663" strokeWidth="1.4" strokeLinejoin="round" />
+              <path d="M135 22 c1.3-3.3 6-3.3 6.3 0 c0.3-3.3 5-3.3 6.3 0 c0.7 4-6.3 8-6.3 8 s-7-4-6.3-8z" fill="#ff8bad" stroke="#c23663" strokeWidth="1.2" strokeLinejoin="round" />
+              <path d="M51 83 c0-24 21-43 46-43 c25 0 46 19 46 43 c0 15-13 24-46 24 c-33 0-46-9-46-24z" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.6" strokeLinejoin="round" />
+              <circle cx="80" cy="32" r="12" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.4" /><circle cx="120" cy="32" r="12" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.4" />
+              <circle cx="80" cy="32" r="5.5" fill="#fbd2a8" /><circle cx="120" cy="32" r="5.5" fill="#fbd2a8" />
+              <ellipse cx="100" cy="62" rx="12" ry="9" fill="#fbd2a8" stroke="#8a4a1f" strokeWidth="2" />
+              <path d="M89 52 q4 -6 8 0" stroke="#3a2a26" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+              <path d="M105 52 q4 -6 8 0" stroke="#3a2a26" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+              <ellipse cx="100" cy="62" rx="2.6" ry="2" fill="#3a2a26" />
+              <path d="M94 68 q6 5 12 0" stroke="#3a2a26" strokeWidth="2" strokeLinecap="round" fill="none" />
+              <circle cx="86" cy="58" r="5" fill="#ffc9d6" opacity="0.5" /><circle cx="114" cy="58" r="5" fill="#ffc9d6" opacity="0.5" />
+              <path d="M9 78 c0-27 15-49 37-49 c22 0 37 22 37 49 c0 15-12 22-37 22 c-25 0-37-7-37-22z" fill="#f3e3ea" stroke="#c9aab5" strokeWidth="2.6" strokeLinejoin="round" />
+              <circle cx="25" cy="20" r="13" fill="#f3e3ea" stroke="#c9aab5" strokeWidth="2.4" /><circle cx="67" cy="20" r="13" fill="#f3e3ea" stroke="#c9aab5" strokeWidth="2.4" />
+              <circle cx="25" cy="20" r="6" fill="#e6c7d3" /><circle cx="67" cy="20" r="6" fill="#e6c7d3" />
+              <circle cx="38" cy="44" r="3" fill="#3a2a26" /><circle cx="56" cy="44" r="3" fill="#3a2a26" />
+              <ellipse cx="47" cy="52" rx="3.6" ry="5" fill="#e0a9bb" />
+              <circle cx="30" cy="54" r="6" fill="#e0a9bb" opacity="0.6" /><circle cx="62" cy="54" r="6" fill="#e0a9bb" opacity="0.6" />
+              <path d="M56 74 Q76 58 98 66" stroke="#c9aab5" strokeWidth="20" strokeLinecap="round" fill="none" />
+              <path d="M56 74 Q76 58 98 66" stroke="#f3e3ea" strokeWidth="16" strokeLinecap="round" fill="none" />
+              <circle cx="99" cy="67" r="9" fill="#f3e3ea" stroke="#c9aab5" strokeWidth="2.2" />
             </svg>
             <div className="ticket-body">
               <div className="ticket-title">БОЛЗООНЫ КАРТ</div>

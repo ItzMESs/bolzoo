@@ -4,20 +4,26 @@ import { useEffect } from "react";
 
 const bearSvg = (
   <svg className="bears" viewBox="0 0 150 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="55" cy="75" rx="34" ry="30" fill="#fff3ef" />
-    <circle cx="30" cy="45" r="13" fill="#fff3ef" /><circle cx="80" cy="45" r="13" fill="#fff3ef" />
-    <circle cx="30" cy="45" r="6" fill="#ffd7e2" /><circle cx="80" cy="45" r="6" fill="#ffd7e2" />
-    <ellipse cx="55" cy="80" rx="14" ry="11" fill="#ffe9e2" />
-    <path d="M46 68 q9 6 18 0" stroke="#3a2a26" strokeWidth="2.4" strokeLinecap="round" fill="none" />
-    <circle cx="42" cy="60" r="6" fill="#ffc9d6" opacity="0.7" /><circle cx="68" cy="60" r="6" fill="#ffc9d6" opacity="0.7" />
-    <ellipse cx="102" cy="78" rx="32" ry="28" fill="#e8935a" />
-    <circle cx="80" cy="50" r="12" fill="#e8935a" /><circle cx="124" cy="50" r="12" fill="#e8935a" />
-    <circle cx="80" cy="50" r="5.5" fill="#fbd2a8" /><circle cx="124" cy="50" r="5.5" fill="#fbd2a8" />
-    <ellipse cx="102" cy="82" rx="13" ry="10" fill="#fbd2a8" />
-    <circle cx="94" cy="70" r="3.2" fill="#3a2a26" /><circle cx="110" cy="70" r="3.2" fill="#3a2a26" />
-    <ellipse cx="102" cy="80" rx="3.5" ry="2.6" fill="#3a2a26" />
-    <path d="M94 88 q8 6 16 0" stroke="#3a2a26" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-    <path d="M67 30 c3-7 12-7 13 0 c1-7 10-7 13 0 c1 8-13 16-13 16 s-14-8-13-16z" fill="#ff5d8f" />
+    <path d="M118 6 c2-5 9-5 9.5 0 c0.5-5 7.5-5 9.5 0 c1 6-9.5 12-9.5 12 s-10.5-6-9.5-12z" fill="#ff5d8f" stroke="#c23663" strokeWidth="1.6" strokeLinejoin="round" />
+    <path d="M135 22 c1.3-3.3 6-3.3 6.3 0 c0.3-3.3 5-3.3 6.3 0 c0.7 4-6.3 8-6.3 8 s-7-4-6.3-8z" fill="#ff8bad" stroke="#c23663" strokeWidth="1.4" strokeLinejoin="round" />
+    <path d="M51 83 c0-24 21-43 46-43 c25 0 46 19 46 43 c0 15-13 24-46 24 c-33 0-46-9-46-24z" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.6" strokeLinejoin="round" />
+    <circle cx="80" cy="32" r="12" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.4" /><circle cx="120" cy="32" r="12" fill="#e8935a" stroke="#8a4a1f" strokeWidth="2.4" />
+    <circle cx="80" cy="32" r="5.5" fill="#fbd2a8" /><circle cx="120" cy="32" r="5.5" fill="#fbd2a8" />
+    <ellipse cx="100" cy="62" rx="12" ry="9" fill="#fbd2a8" stroke="#8a4a1f" strokeWidth="2" />
+    <path d="M89 52 q4 -6 8 0" stroke="#3a2a26" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+    <path d="M105 52 q4 -6 8 0" stroke="#3a2a26" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+    <ellipse cx="100" cy="62" rx="2.6" ry="2" fill="#3a2a26" />
+    <path d="M94 68 q6 5 12 0" stroke="#3a2a26" strokeWidth="2" strokeLinecap="round" fill="none" />
+    <circle cx="86" cy="58" r="5" fill="#ffc9d6" opacity="0.6" /><circle cx="114" cy="58" r="5" fill="#ffc9d6" opacity="0.6" />
+    <path d="M9 78 c0-27 15-49 37-49 c22 0 37 22 37 49 c0 15-12 22-37 22 c-25 0-37-7-37-22z" fill="#fff3ef" stroke="#caa79e" strokeWidth="2.6" strokeLinejoin="round" />
+    <circle cx="25" cy="20" r="13" fill="#fff3ef" stroke="#caa79e" strokeWidth="2.4" /><circle cx="67" cy="20" r="13" fill="#fff3ef" stroke="#caa79e" strokeWidth="2.4" />
+    <circle cx="25" cy="20" r="6" fill="#ffd7e2" /><circle cx="67" cy="20" r="6" fill="#ffd7e2" />
+    <circle cx="38" cy="44" r="3" fill="#3a2a26" /><circle cx="56" cy="44" r="3" fill="#3a2a26" />
+    <ellipse cx="47" cy="52" rx="3.6" ry="5" fill="#ffb3c4" />
+    <circle cx="30" cy="54" r="6" fill="#ffc9d6" opacity="0.7" /><circle cx="62" cy="54" r="6" fill="#ffc9d6" opacity="0.7" />
+    <path d="M56 74 Q76 58 98 66" stroke="#caa79e" strokeWidth="20" strokeLinecap="round" fill="none" />
+    <path d="M56 74 Q76 58 98 66" stroke="#fff3ef" strokeWidth="16" strokeLinecap="round" fill="none" />
+    <circle cx="99" cy="67" r="9" fill="#fff3ef" stroke="#caa79e" strokeWidth="2.2" />
   </svg>
 );
 
@@ -71,9 +77,59 @@ export default function HomePage() {
     function onBack() { if (history.length > 1) { history.pop(); goTo(history[history.length - 1]); } }
     backBtn.addEventListener("click", onBack);
 
+    // ---- step 0: pay first (QPay via byl.mn), then start the wizard ----
+    let draftId = "";
     const startBtn = document.getElementById("startBtn");
-    const onStart = () => next(1);
+    const startPayHint = document.getElementById("startPayHint");
+    async function onStart() {
+      if (draftId) { next(1); return; } // already paid (e.g. came back via "Буцах")
+      startBtn.disabled = true;
+      startBtn.textContent = "Түр хүлээнэ үү...";
+      try {
+        const res = await fetch("/api/invites/start-payment", { method: "POST" });
+        if (!res.ok) throw new Error("start_payment_failed");
+        const data = await res.json();
+        if (data.paymentUrl) {
+          draftId = data.id;
+          window.open(data.paymentUrl, "_blank", "noopener");
+          startPayHint.style.display = "block";
+          startPollingPaid(data.id, () => {
+            startPayHint.style.display = "none";
+            startBtn.disabled = false;
+            startBtn.textContent = "ТӨЛБӨР ТӨЛӨӨД ЭХЛЭХ →";
+            playPop(); vibrate(40);
+            next(1);
+          });
+        } else {
+          // Payment isn't configured yet — stay free, go straight in.
+          next(1);
+        }
+      } catch (e) {
+        showToast("Алдаа гарлаа, дахин оролдоно уу");
+      } finally {
+        if (!draftId) {
+          startBtn.disabled = false;
+          startBtn.textContent = "ТӨЛБӨР ТӨЛӨӨД ЭХЛЭХ →";
+        }
+      }
+    }
     startBtn.addEventListener("click", onStart);
+
+    let pollTimer;
+    function startPollingPaid(id, onPaid) {
+      clearInterval(pollTimer);
+      pollTimer = setInterval(async () => {
+        try {
+          const r = await fetch(`/api/invites/${id}/status`);
+          if (!r.ok) return;
+          const d = await r.json();
+          if (d.paid) {
+            clearInterval(pollTimer);
+            onPaid();
+          }
+        } catch (e) {}
+      }, 3000);
+    }
 
     // ---- step 1: names + email + photo ----
     const senderInput = document.getElementById("senderInput");
@@ -275,6 +331,7 @@ export default function HomePage() {
           brings: bringEditor.getItems().filter((it) => it.title && it.title.trim()),
           afters: afterEditor.getItems().filter((it) => it.title && it.title.trim()),
         };
+        if (draftId) payload.draftId = draftId;
         const res = await fetch("/api/invites", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -284,6 +341,8 @@ export default function HomePage() {
         const data = await res.json();
         generatedLink = `${location.origin}/i/${data.id}`;
         document.getElementById("linkBox").textContent = generatedLink;
+        // Payment (if configured) already happened up front on step 0, so
+        // the link is ready immediately here.
         playPop(); vibrate(40);
         next(5);
       } catch (e) {
@@ -330,6 +389,7 @@ export default function HomePage() {
       copyLinkBtn.removeEventListener("click", onCopyLink);
       shareLinkBtn.removeEventListener("click", onShareLink);
       restartBtn.removeEventListener("click", onRestart);
+      clearInterval(pollTimer);
     };
   }, []);
 
@@ -345,8 +405,9 @@ export default function HomePage() {
           <h1 className="script">Хайртдаа тусгай<br />урилга илгээ</h1>
           <div className="hint">Нэр, өдөр, төлөвлөгөөгөө бөглөөд өвөрмөц линк аваарай</div>
           <div className="price-badge">3,000₮</div>
-          <div className="pay-note">Төлбөр: QPay — тун удахгүй нэмэгдэнэ</div>
-          <button className="cta" id="startBtn" style={{ marginTop: "auto" }}>ЭХЛЭХ →</button>
+          <div className="pay-note">Төлбөр: QPay (byl.mn-ээр дамжина)</div>
+          <button className="cta" id="startBtn" style={{ marginTop: "auto" }}>ТӨЛБӨР ТӨЛӨӨД ЭХЛЭХ →</button>
+          <div className="hint" id="startPayHint" style={{ marginTop: 10, display: "none" }}>⏳ Төлбөр батлагдахыг хүлээж байна...</div>
         </div>
 
         <div className="step" data-cstep="1">
