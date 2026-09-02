@@ -13,6 +13,8 @@ export async function POST(req) {
   const receiverName = (body.receiverName || "").trim().slice(0, 60);
   const senderEmail = (body.senderEmail || "").trim().slice(0, 120);
   const message = (body.message || "").trim().slice(0, 200);
+  const photoRaw = typeof body.photo === "string" ? body.photo : "";
+  const photo = photoRaw.startsWith("data:image/") && photoRaw.length < 350000 ? photoRaw : "";
   const days = Array.isArray(body.days) ? body.days.slice(0, 6) : [];
   const allowTalkLater = !!body.allowTalkLater;
   const brings = Array.isArray(body.brings) ? body.brings.slice(0, 6) : [];
@@ -32,6 +34,7 @@ export async function POST(req) {
     receiverName,
     senderEmail,
     message,
+    photo,
     days,
     allowTalkLater,
     brings,

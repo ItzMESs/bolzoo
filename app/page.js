@@ -35,6 +35,25 @@ export default function HomePage() {
     }
     const weekdayNames = ["Ням", "Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан", "Бямба"];
 
+    let audioCtx;
+    function playPop() {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+      } catch (e) {}
+    }
+    function vibrate(ms) {
+      try { if (navigator.vibrate) navigator.vibrate(ms || 30); } catch (e) {}
+    }
+
     const phone = document.getElementById("creatorPhone");
     const steps = [...phone.querySelectorAll(".step")];
     const progressEl = document.getElementById("cProgress");
@@ -56,7 +75,7 @@ export default function HomePage() {
     const onStart = () => next(1);
     startBtn.addEventListener("click", onStart);
 
-    // ---- step 1: names + email ----
+    // ---- step 1: names + email + photo ----
     const senderInput = document.getElementById("senderInput");
     const receiverInput = document.getElementById("receiverInput");
     const emailInput = document.getElementById("emailInput");
@@ -70,6 +89,42 @@ export default function HomePage() {
     emailInput.addEventListener("input", checkNames);
     const onNamesNext = () => next(2);
     namesNext.addEventListener("click", onNamesNext);
+
+    // ---- photo upload (optional square crop) ----
+    let photoDataUrl = "";
+    const photoInput = document.getElementById("photoInput");
+    const photoPreviewWrap = document.getElementById("photoPreviewWrap");
+    const photoPreviewImg = document.getElementById("photoPreviewImg");
+    const photoRemoveBtn = document.getElementById("photoRemoveBtn");
+    function onPhotoChange() {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const size = 300;
+          const canvas = document.createElement("canvas");
+          canvas.width = size; canvas.height = size;
+          const ctx = canvas.getContext("2d");
+          const side = Math.min(img.width, img.height);
+          const sx = (img.width - side) / 2, sy = (img.height - side) / 2;
+          ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+          photoDataUrl = canvas.toDataURL("image/jpeg", 0.75);
+          photoPreviewImg.src = photoDataUrl;
+          photoPreviewWrap.style.display = "block";
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    photoInput.addEventListener("change", onPhotoChange);
+    function onPhotoRemove() {
+      photoDataUrl = "";
+      photoInput.value = "";
+      photoPreviewWrap.style.display = "none";
+    }
+    photoRemoveBtn.addEventListener("click", onPhotoRemove);
 
     // ---- step 2: days ----
     const dayListEl = document.getElementById("dayList");
@@ -214,6 +269,7 @@ export default function HomePage() {
           receiverName: receiverInput.value.trim(),
           senderEmail: emailInput.value.trim(),
           message: document.getElementById("msgInput").value.trim(),
+          photo: photoDataUrl,
           days: days.filter((d) => d.label.trim() && d.date),
           allowTalkLater: !!talkLaterChk.checked,
           brings: bringEditor.getItems().filter((it) => it.title && it.title.trim()),
@@ -228,6 +284,7 @@ export default function HomePage() {
         const data = await res.json();
         generatedLink = `${location.origin}/i/${data.id}`;
         document.getElementById("linkBox").textContent = generatedLink;
+        playPop(); vibrate(40);
         next(5);
       } catch (e) {
         showToast("Алдаа гарлаа, дахин оролдоно уу");
@@ -311,6 +368,16 @@ export default function HomePage() {
             <div className="field">
               <label>ХУВИЙН ЗУРВАС (ЗААВАЛ БИШ)</label>
               <textarea id="msgInput" placeholder="Жишээ нь: Чамайг маш их хайрладаг ❤️" maxLength={200} rows={3}></textarea>
+            </div>
+            <div className="field">
+              <label>ЗУРАГ НЭМЭХ (ЗААВАЛ БИШ)</label>
+              <input type="file" id="photoInput" accept="image/*" />
+              <div id="photoPreviewWrap" style={{ display: "none", marginTop: 10 }}>
+                <div className="photo-frame">
+                  <img id="photoPreviewImg" alt="" />
+                </div>
+                <button type="button" className="btn-no" id="photoRemoveBtn" style={{ marginTop: 8 }}>Зураг хасах</button>
+              </div>
             </div>
           </div>
           <button className="cta" id="namesNext" disabled style={{ marginTop: "auto" }}>ҮРГЭЛЖЛҮҮЛЭХ</button>
