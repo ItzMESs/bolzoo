@@ -246,7 +246,7 @@ export default function HomePage() {
 
     const bringEditor = makeListEditor(
       "bringList", "addBringBtn", "bringsNext",
-      [{ title: "Цэцэг", desc: "сонгодог сонголт" }, { title: "Амттан", desc: "дараа нь идэхэд" }, { title: "Бэлэг", desc: "жижигхэн сюрприз" }, { title: "Зүгээр л би", desc: "арай зоригтой ч зөв" }],
+      [{ title: "Цэцэг", desc: "Green flag залуу" }, { title: "Амттан", desc: "Хамт идэнгээ ярилцъя" }, { title: "Бэлэг", desc: "Одоохондоо нууц" }, { title: "Чи өөрөө байхад тэр чинь GIFT", desc: "Тайлбар ч хэрэггүй шүү" }],
       "Гарчиг (жишээ: Цэцэг)", "Тайлбар (жишээ: сонгодог сонголт)",
       () => next(4)
     );

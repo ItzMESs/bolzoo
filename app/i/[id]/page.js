@@ -98,25 +98,26 @@ export default function ViewerPage({ params }) {
     const noBtn = document.getElementById("vNoBtn");
     const yesBtn = document.getElementById("vYesBtn");
     const ynRow = document.getElementById("vYnRow");
-    const noPhrases = ["ҮГҮЙ", "Үнэхээр үү?", "Сайн оролдлого 😊", "Бодоод үз дээ", "Ганц л товч үлдлээ", "ТИЙМ гэж бас болно шүү"];
+    const noPhrases = ["ҮГҮЙ", "Үнэхээр үү?", "Сайн оролдлого 😊", "Бодоод үз дээ", "Ганц л товч үлдлээ", "ТИЙМ гэж бас болно"];
     let noTries = 0;
     function dodge() {
       noTries = Math.min(noTries + 1, noPhrases.length - 1);
-      // Reset any earlier offset before measuring, so the room we compute
-      // below is relative to the button's natural (centered) resting spot —
-      // not to a spot it was already nudged away from on a prior dodge.
-      noBtn.style.position = "relative";
-      noBtn.style.left = "0px";
-      noBtn.style.top = "0px";
       noBtn.textContent = noPhrases[noTries];
       const rowRect = ynRow.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
-      const roomRight = Math.max(0, rowRect.right - btnRect.right - 6);
-      const roomLeft = Math.max(0, btnRect.left - rowRect.left - 6);
-      const shiftX = Math.random() * (roomRight + roomLeft) - roomLeft;
-      const maxY = 18;
-      noBtn.style.left = shiftX + "px";
-      noBtn.style.top = (Math.random() - 0.5) * maxY + "px";
+      if (noBtn.style.position !== "absolute") {
+        // First dodge: lift the button out of the flex row and pin it at its
+        // current on-screen spot first, so nothing jumps — from then on it's
+        // positioned purely relative to the row's own box, which physically
+        // cannot let it escape the row no matter how long the phrase is.
+        const startRect = noBtn.getBoundingClientRect();
+        noBtn.style.position = "absolute";
+        noBtn.style.left = (startRect.left - rowRect.left) + "px";
+        noBtn.style.top = (startRect.top - rowRect.top) + "px";
+      }
+      const maxX = Math.max(0, rowRect.width - noBtn.offsetWidth);
+      const maxY = Math.max(0, rowRect.height - noBtn.offsetHeight);
+      noBtn.style.left = Math.random() * maxX + "px";
+      noBtn.style.top = Math.random() * maxY + "px";
     }
     noBtn.addEventListener("mouseenter", dodge);
     noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodge(); }, { passive: false });
