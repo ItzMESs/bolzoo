@@ -72,6 +72,25 @@ export default function ViewerPage({ params }) {
 
     const SENDER = payload.senderName, RECEIVER = payload.receiverName;
     document.getElementById("vPairLabel").textContent = `${SENDER.toUpperCase()} · ${RECEIVER.toUpperCase()}`;
+    if (payload.message) {
+      const msgEl = document.getElementById("vInviteMsg");
+      msgEl.textContent = `"${payload.message}"`;
+      msgEl.style.display = "block";
+    }
+
+    function burstConfetti() {
+      const colors = ["#ff5d8f", "#ff8bad", "#ffd166", "#37c98a", "#fff8f3"];
+      for (let i = 0; i < 26; i++) {
+        const el = document.createElement("div");
+        el.className = "confetti-piece";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animation = `confetti-fall ${1.1 + Math.random() * 0.9}s ease-in forwards`;
+        el.style.animationDelay = Math.random() * 0.3 + "s";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2600);
+      }
+    }
 
     const state = { day: null, dayDate: null, bring: null, after: null };
 
@@ -93,7 +112,7 @@ export default function ViewerPage({ params }) {
     noBtn.addEventListener("mouseenter", dodge);
     noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodge(); }, { passive: false });
     noBtn.addEventListener("click", (e) => e.preventDefault());
-    yesBtn.addEventListener("click", () => next(1));
+    yesBtn.addEventListener("click", () => { burstConfetti(); next(1); });
 
     // ---- step 1: day choices ----
     const dayChoicesEl = document.getElementById("vDayChoices");
@@ -227,6 +246,7 @@ export default function ViewerPage({ params }) {
       const text = `📅 Болзоо: ${SENDER} × ${RECEIVER}\nОгноо: ${dateStr}\nАвчрах зүйл: ${state.bring || "-"}\nДараа нь: ${state.after || "-"}`;
       try { await navigator.clipboard.writeText(text); showToast("Дэлгэрэнгүй хуулагдлаа ✓"); }
       catch (e) { showToast(text); }
+      document.getElementById("vStamp").classList.add("show");
     });
 
     // ---- optional manual share (backup channel) ----
@@ -235,6 +255,98 @@ export default function ViewerPage({ params }) {
       if (navigator.share) { try { await navigator.share({ text }); return; } catch (e) {} }
       try { await navigator.clipboard.writeText(text); showToast("Хуулагдлаа ✓"); }
       catch (e) { showToast(text); }
+    });
+
+    // ---- shareable image card ----
+    function roundRectPath(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+    async function buildShareCanvas(dateVal, bringVal, afterVal) {
+      try { await document.fonts.load('700 60px "Caveat"'); } catch (e) {}
+      const canvas = document.createElement("canvas");
+      canvas.width = 900; canvas.height = 1500;
+      const ctx = canvas.getContext("2d");
+
+      const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      grad.addColorStop(0, "#4a1230"); grad.addColorStop(1, "#2c0a1c");
+      ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "rgba(255,255,255,0.05)";
+      for (let y = 20; y < canvas.height; y += 34) {
+        for (let x = 20; x < canvas.width; x += 34) {
+          ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#fff8f3";
+      ctx.font = '700 84px "Caveat", cursive';
+      ctx.fillText("Болзоо товлогдлоо!", canvas.width / 2, 220);
+
+      ctx.font = "130px serif";
+      ctx.fillText("🐻 🧸", canvas.width / 2, 380);
+
+      const cardX = 90, cardY = 470, cardW = canvas.width - 180, cardH = 480;
+      ctx.fillStyle = "#fff8f3";
+      roundRectPath(ctx, cardX, cardY, cardW, cardH, 30);
+      ctx.fill();
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#a5486b";
+      ctx.font = "700 24px sans-serif";
+      ctx.fillText("БОЛЗООНЫ КАРТ", cardX + 44, cardY + 66);
+
+      function row(label, val, y) {
+        ctx.fillStyle = "#a5486b"; ctx.font = "700 19px sans-serif";
+        ctx.fillText(label, cardX + 44, y);
+        ctx.fillStyle = "#2c0a1c"; ctx.font = "700 30px sans-serif";
+        ctx.fillText(val, cardX + 44, y + 40);
+      }
+      row("ХЭЗЭЭ", dateVal, cardY + 150);
+      row("ЮУ АВЧРАХ", bringVal, cardY + 250);
+      row("ДАРАА НЬ", afterVal, cardY + 350);
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#ffb8cf";
+      ctx.font = '700 40px "Caveat", cursive';
+      ctx.fillText(`${SENDER}  ×  ${RECEIVER}`, canvas.width / 2, cardY + cardH + 90);
+
+      return canvas;
+    }
+
+    document.getElementById("vImageBtn").addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
+      const originalText = btn.textContent;
+      btn.textContent = "Зураг үүсгэж байна...";
+      btn.disabled = true;
+      try {
+        const canvas = await buildShareCanvas(
+          document.getElementById("vTDate").textContent,
+          document.getElementById("vTBring").textContent,
+          document.getElementById("vTAfter").textContent
+        );
+        canvas.toBlob(async (blob) => {
+          if (!blob) { showToast("Зураг үүсгэхэд алдаа гарлаа"); return; }
+          const file = new File([blob], "bolzoo-urilga.png", { type: "image/png" });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try { await navigator.share({ files: [file], title: "Болзоо товлогдлоо", text: `${SENDER} × ${RECEIVER}` }); return; }
+            catch (err) { /* fall through to download */ }
+          }
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url; a.download = "bolzoo-urilga.png"; a.click();
+          showToast("Зураг татагдлаа ✓");
+        }, "image/png");
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
     });
   }, [status, payload, id]);
 
@@ -249,6 +361,7 @@ export default function ViewerPage({ params }) {
           <div className="eyebrow" id="vPairLabel"></div>
           <div className="subtext">МАРТАГДАШГҮЙ ОРОЙ БАЙХ БОЛНО</div>
           <h1 className="script">Надтай болзоонд<br />явах уу?</h1>
+          <div className="invite-message" id="vInviteMsg" style={{ display: "none" }}></div>
           <div className="hint">Зөвхөн нэг л зөв хариулт бий 🙂</div>
           <div className="yn-row" id="vYnRow">
             <button className="btn btn-yes" id="vYesBtn">ТИЙМ ♥</button>
@@ -287,6 +400,7 @@ export default function ViewerPage({ params }) {
         <div className="step" data-vstep="5">
           <h1 className="script" style={{ fontSize: 30 }}>Болзоо<br />товлогдлоо!</h1>
           <div className="ticket" style={{ marginTop: 14 }}>
+            <div className="ticket-stamp" id="vStamp">ХАДГАЛСАН</div>
             <svg className="mini-bears" viewBox="0 0 150 110" xmlns="http://www.w3.org/2000/svg">
               <ellipse cx="55" cy="75" rx="34" ry="30" fill="#f3e3ea" />
               <circle cx="30" cy="45" r="13" fill="#f3e3ea" /><circle cx="80" cy="45" r="13" fill="#f3e3ea" />
@@ -304,6 +418,7 @@ export default function ViewerPage({ params }) {
             </div>
           </div>
 
+          <div className="cal-label" style={{ marginBottom: 8 }}>ЭХЛЭХЭД</div>
           <div className="countdown" id="vCountdown">
             <div className="box"><div className="num" id="vCdD">0</div><div className="lab">өдөр</div></div>
             <div className="box"><div className="num" id="vCdH">0</div><div className="lab">цаг</div></div>
@@ -311,9 +426,14 @@ export default function ViewerPage({ params }) {
             <div className="box"><div className="num" id="vCdS">0</div><div className="lab">секунд</div></div>
           </div>
 
+          <button className="cta" id="vImageBtn" style={{ marginTop: 0, marginBottom: 10 }}>🖼️ Зурган карт болгож хуваалцах</button>
+
+          <div className="row-btns">
+            <button className="btn-save" id="vSaveBtn">Дэлгэрэнгүй хуулах</button>
+            <button className="btn-share" id="vShareBtn">Хуваалцах</button>
+          </div>
+
           <div className="hint" id="vReplyHint" style={{ textAlign: "left", marginBottom: 10 }}></div>
-          <button className="btn-no" id="vSaveBtn" style={{ marginBottom: 6 }}>Дэлгэрэнгүй хуулах</button>
-          <button className="btn-no" id="vShareBtn" style={{ marginBottom: 10 }}>эсвэл Messenger-ээр давхар мэдэгдэх</button>
 
           <div className="final-note">Товлогдлоо — тэгээд уулзъя ♥</div>
         </div>

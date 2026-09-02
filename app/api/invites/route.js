@@ -12,6 +12,7 @@ export async function POST(req) {
   const senderName = (body.senderName || "").trim().slice(0, 60);
   const receiverName = (body.receiverName || "").trim().slice(0, 60);
   const senderEmail = (body.senderEmail || "").trim().slice(0, 120);
+  const message = (body.message || "").trim().slice(0, 200);
   const days = Array.isArray(body.days) ? body.days.slice(0, 6) : [];
   const allowTalkLater = !!body.allowTalkLater;
   const brings = Array.isArray(body.brings) ? body.brings.slice(0, 6) : [];
@@ -30,6 +31,7 @@ export async function POST(req) {
     senderName,
     receiverName,
     senderEmail,
+    message,
     days,
     allowTalkLater,
     brings,

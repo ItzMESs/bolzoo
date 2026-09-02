@@ -213,6 +213,7 @@ export default function HomePage() {
           senderName: senderInput.value.trim(),
           receiverName: receiverInput.value.trim(),
           senderEmail: emailInput.value.trim(),
+          message: document.getElementById("msgInput").value.trim(),
           days: days.filter((d) => d.label.trim() && d.date),
           allowTalkLater: !!talkLaterChk.checked,
           brings: bringEditor.getItems().filter((it) => it.title && it.title.trim()),
@@ -306,6 +307,10 @@ export default function HomePage() {
               <label>ТАНЫ ИМЭЙЛ</label>
               <input type="email" id="emailInput" placeholder="you@example.com" maxLength={120} />
               <div className="subhint">Хайрт хүн чинь хариулмагц энд мэдэгдэл очно</div>
+            </div>
+            <div className="field">
+              <label>ХУВИЙН ЗУРВАС (ЗААВАЛ БИШ)</label>
+              <textarea id="msgInput" placeholder="Жишээ нь: Чамайг маш их хайрладаг ❤️" maxLength={200} rows={3}></textarea>
             </div>
           </div>
           <button className="cta" id="namesNext" disabled style={{ marginTop: "auto" }}>ҮРГЭЛЖЛҮҮЛЭХ</button>
