@@ -100,7 +100,7 @@ h1.script{ font-family:'Caveat', cursive; font-size:40px; line-height:1.05; marg
 /* Yes stays pinned to a fixed lane on the left so it can never be covered
    or crowded out by the dodging No button. */
 .btn-yes{
-  position:absolute; left:0; top:0; width:calc(62% - 6px); height:100%;
+  position:absolute; left:0; top:0; width:calc(48% - 6px); height:100%;
   display:flex; align-items:center; justify-content:center;
   background: linear-gradient(135deg, var(--pink-500), #ff3d7a); border-color: transparent;
   box-shadow: 0 8px 22px -6px rgba(255,61,122,0.65); animation: pulse-glow 1.8s ease-in-out infinite;
@@ -114,8 +114,8 @@ h1.script{ font-family:'Caveat', cursive; font-size:40px; line-height:1.05; marg
    the viewer page), so it's positioned absolutely from the start. */
 .btn-no{
   position:absolute; right:0; top:50%; transform: translateY(-50%);
-  background: transparent; color: var(--muted); font-weight:700; font-size:10px; white-space:nowrap;
-  padding:12px 14px; max-width:min(150px, 36vw); overflow:hidden; text-overflow:ellipsis;
+  background: transparent; color: var(--muted); font-weight:700; font-size:12.5px; white-space:nowrap;
+  padding:14px 18px; max-width:min(190px, 46vw); overflow:hidden; text-overflow:ellipsis;
 }
 
 .choices{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; width:100%; margin-bottom:18px; }
