@@ -98,7 +98,22 @@ export default function ViewerPage({ params }) {
     const noBtn = document.getElementById("vNoBtn");
     const yesBtn = document.getElementById("vYesBtn");
     const ynRow = document.getElementById("vYnRow");
-    const noPhrases = ["ҮГҮЙ", "Үнэхээр үү?", "Сайн оролдлого 😊", "Бодоод үз дээ", "Ганц л товч үлдлээ", "ТИЙМ гэж бас болно"];
+    const noPhrases = [
+      "ҮГҮЙ",
+      "Үнэхээр үү?",
+      "Сайн оролдлого 😊",
+      "Бодоод үз дээ",
+      "Дахиад оролдоорой",
+      "Намайг бүү гомдоо 🥺",
+      "Ганц л товч үлдлээ",
+      "Чи намайг олохгүй ш дээ 😏",
+      "Хөөрхөн атлаа хатуу юм чи",
+      "Сүүлчийн санал шүү",
+      "За за, ойрхон байна",
+      "Битгий ингээрэй ааа",
+      "Зүгээр ТИЙМ гэчихмээр байна биз?",
+      "ТИЙМ гэж бас болно шүү",
+    ];
     let noTries = 0;
     function dodge() {
       noTries = Math.min(noTries + 1, noPhrases.length - 1);
