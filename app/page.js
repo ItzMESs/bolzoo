@@ -77,59 +77,9 @@ export default function HomePage() {
     function onBack() { if (history.length > 1) { history.pop(); goTo(history[history.length - 1]); } }
     backBtn.addEventListener("click", onBack);
 
-    // ---- step 0: pay first (QPay via byl.mn), then start the wizard ----
-    let draftId = "";
     const startBtn = document.getElementById("startBtn");
-    const startPayHint = document.getElementById("startPayHint");
-    async function onStart() {
-      if (draftId) { next(1); return; } // already paid (e.g. came back via "Буцах")
-      startBtn.disabled = true;
-      startBtn.textContent = "Түр хүлээнэ үү...";
-      try {
-        const res = await fetch("/api/invites/start-payment", { method: "POST" });
-        if (!res.ok) throw new Error("start_payment_failed");
-        const data = await res.json();
-        if (data.paymentUrl) {
-          draftId = data.id;
-          window.open(data.paymentUrl, "_blank", "noopener");
-          startPayHint.style.display = "block";
-          startPollingPaid(data.id, () => {
-            startPayHint.style.display = "none";
-            startBtn.disabled = false;
-            startBtn.textContent = "ТӨЛБӨР ТӨЛӨӨД ЭХЛЭХ →";
-            playPop(); vibrate(40);
-            next(1);
-          });
-        } else {
-          // Payment isn't configured yet — stay free, go straight in.
-          next(1);
-        }
-      } catch (e) {
-        showToast("Алдаа гарлаа, дахин оролдоно уу");
-      } finally {
-        if (!draftId) {
-          startBtn.disabled = false;
-          startBtn.textContent = "ТӨЛБӨР ТӨЛӨӨД ЭХЛЭХ →";
-        }
-      }
-    }
+    const onStart = () => next(1);
     startBtn.addEventListener("click", onStart);
-
-    let pollTimer;
-    function startPollingPaid(id, onPaid) {
-      clearInterval(pollTimer);
-      pollTimer = setInterval(async () => {
-        try {
-          const r = await fetch(`/api/invites/${id}/status`);
-          if (!r.ok) return;
-          const d = await r.json();
-          if (d.paid) {
-            clearInterval(pollTimer);
-            onPaid();
-          }
-        } catch (e) {}
-      }, 3000);
-    }
 
     // ---- step 1: names + email + photo ----
     const senderInput = document.getElementById("senderInput");
@@ -331,7 +281,6 @@ export default function HomePage() {
           brings: bringEditor.getItems().filter((it) => it.title && it.title.trim()),
           afters: afterEditor.getItems().filter((it) => it.title && it.title.trim()),
         };
-        if (draftId) payload.draftId = draftId;
         const res = await fetch("/api/invites", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -341,8 +290,6 @@ export default function HomePage() {
         const data = await res.json();
         generatedLink = `${location.origin}/i/${data.id}`;
         document.getElementById("linkBox").textContent = generatedLink;
-        // Payment (if configured) already happened up front on step 0, so
-        // the link is ready immediately here.
         playPop(); vibrate(40);
         next(5);
       } catch (e) {
@@ -389,7 +336,6 @@ export default function HomePage() {
       copyLinkBtn.removeEventListener("click", onCopyLink);
       shareLinkBtn.removeEventListener("click", onShareLink);
       restartBtn.removeEventListener("click", onRestart);
-      clearInterval(pollTimer);
     };
   }, []);
 
@@ -404,10 +350,7 @@ export default function HomePage() {
           <div className="eyebrow">БОЛЗОО УРИЛГА</div>
           <h1 className="script">Хайртдаа тусгай<br />урилга илгээ</h1>
           <div className="hint">Нэр, өдөр, төлөвлөгөөгөө бөглөөд өвөрмөц линк аваарай</div>
-          <div className="price-badge">3,000₮</div>
-          <div className="pay-note">Төлбөр: QPay (byl.mn-ээр дамжина)</div>
-          <button className="cta" id="startBtn" style={{ marginTop: "auto" }}>ТӨЛБӨР ТӨЛӨӨД ЭХЛЭХ →</button>
-          <div className="hint" id="startPayHint" style={{ marginTop: 10, display: "none" }}>⏳ Төлбөр батлагдахыг хүлээж байна...</div>
+          <button className="cta" id="startBtn" style={{ marginTop: "auto" }}>ЭХЛЭХ →</button>
         </div>
 
         <div className="step" data-cstep="1">
